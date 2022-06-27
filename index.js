@@ -70,6 +70,16 @@ app.get("/users/:id", (req, res) => {
   });
 });
 
+// delete by id
+app.delete("/users/:id", (req, res) => {
+  // kerjakan disini
+});
+
+// patch by id (username)
+app.patch("/users/:id", (req, res) => {
+  // kerjakan disini
+});
+
 app.listen(port, (error) => {
   if (error) return console.log({ err: error.message });
   console.log(`API berhasil running di port ${port}`);
