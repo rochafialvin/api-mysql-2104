@@ -9,7 +9,7 @@ app.get("/", (req, res) => {
 app.get("/users", (req, res) => {
   res.send({
     status: "Success",
-    data: ["Hendrickson", "Thomspon", "Topson"],
+    data: ["Hendrickson", "Thomspon", "Topson", "Lawson"],
   });
 });
 
