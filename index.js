@@ -71,13 +71,31 @@ app.get("/users/:id", (req, res) => {
 });
 
 // delete by id
+// /users/23
 app.delete("/users/:id", (req, res) => {
-  // kerjakan disini
+  const { id } = req.params;
+
+  const index = users.findIndex((user) => user.id == id);
+  users.splice(index, 1);
+
+  res.send({
+    status: "Success",
+    message: "Delete user success",
+  });
 });
 
 // patch by id (username)
 app.patch("/users/:id", (req, res) => {
-  // kerjakan disini
+  const { id } = req.params;
+  const { username } = req.body;
+  const index = users.findIndex((user) => user.id == id);
+
+  users[index].username = username;
+
+  res.send({
+    status: "Success",
+    message: "Update user success",
+  });
 });
 
 app.listen(port, (error) => {
