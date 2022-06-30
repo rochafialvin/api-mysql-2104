@@ -9,6 +9,6 @@
     "nodemon": "^2.0.18"
   },
   "scripts": {
-    "server": "nodemon  src/index.js"
+    "start": "nodemon  src/index.js"
   }
 }
