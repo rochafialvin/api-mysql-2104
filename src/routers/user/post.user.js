@@ -3,7 +3,7 @@ const router = express.Router();
 const { isFieldEmpties } = require("../../helpers");
 const pool = require("../../lib/database");
 
-const registerCustomerController = async (req, res) => {
+const registerUserController = async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -20,16 +20,25 @@ const registerCustomerController = async (req, res) => {
     // mendapatkan connection
     const connection = pool.promise();
 
-    const sqlCreateCustomer = `INSERT INTO customer(username, password) VALUES ('${username}', '${password}')`;
+    const sqlGetUser = `SELECT user_id FROM user WHERE username = ?`;
+    const dataGetUser = [username];
+    const [resGetUser] = await connection.query(sqlGetUser, dataGetUser);
 
-    const [resCreateCustomer] = await connection.query(sqlCreateCustomer);
+    if (resGetUser.length) {
+      throw {
+        status: "Error",
+        message: "Username is already exists",
+      };
+    }
+
+    const sqlCreateUser = `INSERT INTO user SET ?`;
+    const dataCreateUser = [{ username, password }];
+
+    await connection.query(sqlCreateUser, dataCreateUser);
 
     res.send({
       status: "Success",
-      message: "Success create new customer",
-      data: {
-        result: resCreateCustomer,
-      },
+      message: "Success create new user",
     });
   } catch (error) {
     res.send({
@@ -38,6 +47,6 @@ const registerCustomerController = async (req, res) => {
     });
   }
 };
-router.post("/", registerCustomerController);
+router.post("/", registerUserController);
 
 module.exports = router;
