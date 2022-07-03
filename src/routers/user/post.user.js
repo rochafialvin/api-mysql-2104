@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const { isFieldEmpties } = require("../../helpers");
+const { hash } = require("../../lib/bcryptjs");
 const pool = require("../../lib/database");
 
-const registerUserController = async (req, res) => {
+const registerUserController = async (req, res, next) => {
   try {
     const { username, password } = req.body;
 
@@ -12,12 +13,12 @@ const registerUserController = async (req, res) => {
     if (emptyFields.length) {
       throw {
         status: "Error",
-        message: "Empty fields",
+        code: 400,
+        message: `Empty fields : ${emptyFields}`,
         data: { result: emptyFields },
       };
     }
 
-    // mendapatkan connection
     const connection = pool.promise();
 
     const sqlGetUser = `SELECT user_id FROM user WHERE username = ?`;
@@ -31,20 +32,19 @@ const registerUserController = async (req, res) => {
       };
     }
 
+    const hashedPassword = hash(password);
+
     const sqlCreateUser = `INSERT INTO user SET ?`;
-    const dataCreateUser = [{ username, password }];
+    const dataCreateUser = [{ username, password: hashedPassword }];
 
     await connection.query(sqlCreateUser, dataCreateUser);
 
-    res.send({
+    res.status(201).send({
       status: "Success",
       message: "Success create new user",
     });
   } catch (error) {
-    res.send({
-      status: "Error",
-      message: error.message,
-    });
+    next(error);
   }
 };
 router.post("/", registerUserController);
