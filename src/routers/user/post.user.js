@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { isFieldEmpties } = require("../../helpers");
 const pool = require("../../lib/database");
-const { hash } = require("../../lib/bcryptjs");
+const { hash, compare } = require("../../lib/bcryptjs");
+const { createToken } = require("../../lib/token");
 
 const registerUserController = async (req, res, next) => {
   try {
@@ -64,6 +65,58 @@ const registerUserController = async (req, res, next) => {
     next(error); // error akan diteruskan ke error handler di index.js
   }
 };
+
+const loginUserController = async (req, res, next) => {
+  try {
+    // get user by email
+    // if not found, send error, user not found
+    const { email, password } = req.body;
+
+    const connection = pool.promise();
+
+    const sqlGetUser = `SELECT user_id, username, password FROM user WHERE email = ?`;
+    const dataGetUser = [email];
+    const [resGetUser] = await connection.query(sqlGetUser, dataGetUser);
+
+    if (!resGetUser.length) {
+      throw {
+        code: 404,
+        message: `Can not find account with this email`,
+      };
+    }
+    // compare password
+    // if doesn't match, send error
+    const user = resGetUser[0];
+
+    const isPasswordMatch = compare(password, user.password);
+
+    if (!isPasswordMatch) {
+      throw {
+        code: 401,
+        message: `Password is incorrect`,
+      };
+    }
+
+    // generate token
+    // send response with token
+    const token = createToken({
+      user_id: user.user_id,
+      username: user.username,
+    });
+
+    res.send({
+      status: "Success",
+      message: "Login Success",
+      data: {
+        result: { user_id: user.user_id, username: user.username, token },
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 router.post("/", registerUserController);
+router.post("/login", loginUserController);
 
 module.exports = router;
