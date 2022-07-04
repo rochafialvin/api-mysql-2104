@@ -3,16 +3,16 @@ const router = express.Router();
 const { isFieldEmpties } = require("../../helpers");
 const pool = require("../../lib/database");
 
-const registerCustomerController = async (req, res) => {
+const registerUserController = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, email, password } = req.body;
 
-    const emptyFields = isFieldEmpties({ username, password });
+    const emptyFields = isFieldEmpties({ username, email, password });
 
     if (emptyFields.length) {
       throw {
         status: "Error",
-        message: "Empty fields",
+        message: `Empty fields :  ${emptyFields}`,
         data: { result: emptyFields },
       };
     }
@@ -20,15 +20,19 @@ const registerCustomerController = async (req, res) => {
     // mendapatkan connection
     const connection = pool.promise();
 
-    const sqlCreateCustomer = `INSERT INTO customer(username, password) VALUES ('${username}', '${password}')`;
+    const sqlCreateUser = `INSERT INTO user SET ?`;
+    const dataCreateUser = [{ username, email, password }];
 
-    const [resCreateCustomer] = await connection.query(sqlCreateCustomer);
+    const [resCreateUser] = await connection.query(
+      sqlCreateUser,
+      dataCreateUser
+    );
 
     res.send({
       status: "Success",
-      message: "Success create new customer",
+      message: "Success create new user",
       data: {
-        result: resCreateCustomer,
+        result: resCreateUser,
       },
     });
   } catch (error) {
@@ -38,6 +42,6 @@ const registerCustomerController = async (req, res) => {
     });
   }
 };
-router.post("/", registerCustomerController);
+router.post("/", registerUserController);
 
 module.exports = router;
