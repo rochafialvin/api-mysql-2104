@@ -91,7 +91,7 @@ router.patch("/", auth, updateUserController);
 router.patch(
   "/avatar",
   auth,
-  uploadAvatar.single("avatar"),
+  uploadAvatar.single("hendra"),
   updateUserAvatarController
 );
 
