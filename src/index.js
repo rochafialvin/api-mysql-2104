@@ -2,13 +2,12 @@ const express = require("express");
 const app = express();
 const port = 2104;
 const bearerToken = require("express-bearer-token");
-const cors = require("cors");
 
 // ROUTERS
 const userRouter = require("./routers/user");
 
-app.use(cors());
 app.use(bearerToken());
+app.use("/public", express.static("public")); // mengizinkan folder public di akses
 app.use(express.json());
 
 app.get("/", (req, res) => {
