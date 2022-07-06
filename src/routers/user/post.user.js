@@ -57,8 +57,12 @@ const registerUserController = async (req, res, next) => {
       dataCreateUser
     );
 
+    // create token untuk verifikasi
+    // token : eyJhbG
+    const token = createToken({ user_id: resCreateUser.insertId });
+
     // send verification email
-    await sendMail({ email });
+    await sendMail({ email, token });
 
     res.send({
       status: "Success",
