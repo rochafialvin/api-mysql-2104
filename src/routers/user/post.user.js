@@ -4,6 +4,7 @@ const { isFieldEmpties } = require("../../helpers");
 const pool = require("../../lib/database");
 const { hash, compare } = require("../../lib/bcryptjs");
 const { createToken } = require("../../lib/token");
+const { sendMail } = require("../../lib/nodemailer");
 
 const registerUserController = async (req, res, next) => {
   try {
@@ -55,6 +56,9 @@ const registerUserController = async (req, res, next) => {
       sqlCreateUser,
       dataCreateUser
     );
+
+    // send verification email
+    await sendMail({ email });
 
     res.send({
       status: "Success",
