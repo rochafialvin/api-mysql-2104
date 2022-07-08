@@ -5,9 +5,10 @@ const bearerToken = require("express-bearer-token");
 const cors = require("cors");
 
 // ROUTERS
+const cartRouter = require("./routers/cart");
 const userRouter = require("./routers/user");
 const productRouter = require("./routers/product");
-const cartRouter = require("./routers/cart");
+const transactionRouter = require("./routers/transaction");
 
 app.use(cors()); // memperbolehkan untuk diakses dari origin yang berbeda
 app.use(bearerToken()); // agar dapat mengakses token di req.token
@@ -19,8 +20,9 @@ app.get("/", (req, res) => {
 });
 
 app.use("/users", userRouter);
-app.use("/products", productRouter);
 app.use("/carts", cartRouter);
+app.use("/products", productRouter);
+app.use("/transactions", transactionRouter);
 
 // error handler
 app.use((error, req, res, next) => {
