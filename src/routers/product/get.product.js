@@ -18,16 +18,6 @@ const getProductListController = async (req, res, next) => {
       };
     }
 
-    // page 1
-    // pagesize : 6
-    // product : 1 - 6
-    // offset : 0 * 6 = 0 (tidak ada product yang dilewati)
-
-    // page 2
-    // pagesize : 6
-    // product : 7 - 12
-    // offset : 1 * 6 = 6 (6 product yang di lewati)
-
     page = +page;
     pageSize = +pageSize;
 
@@ -56,6 +46,35 @@ const getProductListController = async (req, res, next) => {
   }
 };
 
+const getProductDetailController = async (req, res, next) => {
+  try {
+    const { productId } = req.params;
+
+    const connection = pool.promise();
+    const sqlGetProduct = `SELECT product_id, variant, price, origin, description, image FROM product WHERE product_id = ?`;
+    const dataGetProduct = [productId];
+    const [resGetProduct] = await connection.query(
+      sqlGetProduct,
+      dataGetProduct
+    );
+
+    const product = resGetProduct[0];
+
+    if (!product) throw { message: "Product not found" };
+
+    res.send({
+      status: "Success",
+      message: "Product Detail",
+      data: {
+        result: product,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 router.get("/", auth, getProductListController);
+router.get("/:productId", auth, getProductDetailController);
 
 module.exports = router;
