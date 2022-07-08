@@ -5,6 +5,7 @@ const pool = mysql2.createPool({
   user: "root",
   database: "noodles",
   password: "Mysql-009",
+  decimalNumbers: true,
 });
 
 module.exports = pool;
