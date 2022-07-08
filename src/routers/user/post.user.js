@@ -50,7 +50,14 @@ const registerUserController = async (req, res, next) => {
     const encryptedPassword = hash(password);
 
     const sqlCreateUser = `INSERT INTO user SET ?`;
-    const dataCreateUser = [{ username, email, password: encryptedPassword }];
+    const dataCreateUser = [
+      {
+        username,
+        email,
+        image: "/public/avatar/default-avatar.jpg",
+        password: encryptedPassword,
+      },
+    ];
 
     const [resCreateUser] = await connection.query(
       sqlCreateUser,
