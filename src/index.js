@@ -7,6 +7,7 @@ const cors = require("cors");
 // ROUTERS
 const userRouter = require("./routers/user");
 const productRouter = require("./routers/product");
+const cartRouter = require("./routers/cart");
 
 app.use(cors()); // memperbolehkan untuk diakses dari origin yang berbeda
 app.use(bearerToken()); // agar dapat mengakses token di req.token
@@ -19,6 +20,7 @@ app.get("/", (req, res) => {
 
 app.use("/users", userRouter);
 app.use("/products", productRouter);
+app.use("/carts", cartRouter);
 
 // error handler
 app.use((error, req, res, next) => {
