@@ -3,6 +3,8 @@ const { isFieldEmpties } = require("../../helpers");
 const router = express.Router();
 const { auth } = require("../../helpers/auth");
 const pool = require("../../lib/database");
+const { createHtmlString } = require("../../lib/handlebars/basic");
+const htmlPdf = require("html-pdf");
 
 const getTransactionListController = async (req, res, next) => {
   try {
@@ -67,6 +69,32 @@ const getTransactionListController = async (req, res, next) => {
   }
 };
 
+const createDetailTransactionController = async (req, res, next) => {
+  try {
+    const data = {
+      name: "james",
+      email: "jeje@gmail.com",
+      age: 11,
+      pets: [
+        { id: 1, name: "Bird" },
+        { id: 2, name: "Comodo" },
+        { id: 3, name: "Sea Pig" },
+      ],
+    };
+
+    const htmlString = createHtmlString(data);
+
+    htmlPdf.create(htmlString, { format: "A4" }).toStream((error, stream) => {
+      if (error) throw error;
+
+      stream.pipe(res);
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 router.get("/", auth, getTransactionListController);
+router.get("/print", createDetailTransactionController);
 
 module.exports = router;
