@@ -10,7 +10,7 @@ const getCartListController = async (req, res, next) => {
 
     const connection = pool.promise();
     const sqlGetCart = `SELECT 
-      cart_id, product_id, quantity,
+      cart_id, product_id, quantity, description,
       variant, price, origin, image, (quantity * price) total
     FROM cart c
     JOIN product p USING(product_id)
