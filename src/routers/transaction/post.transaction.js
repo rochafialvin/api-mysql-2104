@@ -16,6 +16,16 @@ const createTransactionController = async (req, res, next) => {
 
     await connection.beginTransaction();
 
+    // delete cart
+    const sqlDeleteCart = `DELETE FROM cart WHERE user_id = ?`;
+    const dataDeleteCart = [user_id];
+    const [resDeleteCart] = await connection.query(
+      sqlDeleteCart,
+      dataDeleteCart
+    );
+
+    if (!resDeleteCart.affectedRows) throw { message: "Failed delete cart" };
+
     // insert to transaction
     const sqlCreateTransaction = `INSERT INTO transaction SET ?`;
     const dataCreateTransaction = [{ user_id, total }];
@@ -28,25 +38,25 @@ const createTransactionController = async (req, res, next) => {
       throw { message: "Failed create transaction" };
 
     // insert to detail transactions
-    const sqlCreateDetailTransaction = `INSERT INTO detailTransaction (transaction_id, product_id, product_name, product_price, product_description, product_origin,product_image,quantity) VALUES ?`;
+    const sqlCreateDetailTransaction = `INSERT INTO detailTransaction (transaction_id, product_id, product_name, product_price, product_description, product_origin, product_image, quantity) VALUES ?`;
     const mappedData = products.map((product) => {
       const {
         product_id,
-        product_name,
-        product_price,
-        product_description,
-        product_origin,
-        product_image,
         quantity,
+        variant,
+        price,
+        origin,
+        image,
+        description,
       } = product;
       return [
         resCreateTransaction.insertId,
         product_id,
-        product_name,
-        product_price,
-        product_description,
-        product_origin,
-        product_image,
+        variant,
+        price,
+        description,
+        origin,
+        image,
         quantity,
       ];
     });
