@@ -5,18 +5,49 @@
       .red {
         color: red;
       }
+
+      table,
+      th,
+      td {
+        border: 1px solid black;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 10px;
+      }
     </style>
   </head>
   <body>
-    <h1 style="text-align: center; font-weight: bold" class="red">BIODATA</h1>
+    <!-- {user_id, username, first_name, last_name, email, phone, fullName, products} -->
+    <h1 style="text-align: center; font-weight: bold" class="red">INVOICE</h1>
 
-    <p>Name : {{name}}</p>
+    <p>Name : {{fullName}}</p>
     <p>Email : {{email}}</p>
     <p>Age : {{age}}</p>
-    <ul>
-      {{#each pets}}
-      <li>{{this.id}}. {{this.name}}</li>
-      {{/each}}
-    </ul>
+    <p>Phone : {{phone}}</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>id</th>
+          <th>variant</th>
+          <th>origin</th>
+          <th>price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- product_id , product_name, product_origin, product_price -->
+        {{#each products}}
+        <tr>
+          <td>{{this.product_id}}</td>
+          <td>{{this.product_name}}</td>
+          <td>{{this.product_origin}}</td>
+          <td>{{this.product_price}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
   </body>
 </html>
