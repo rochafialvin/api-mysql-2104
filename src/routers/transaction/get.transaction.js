@@ -71,15 +71,30 @@ const getTransactionListController = async (req, res, next) => {
 
 const createDetailTransactionController = async (req, res, next) => {
   try {
+    const { user_id, username, first_name, last_name, email, phone, age } =
+      req.user;
+    const { transactionId } = req.params;
+
+    const connection = pool.promise();
+    const sqlGetTransaction = `SELECT
+      product_id , product_name, product_origin, product_price
+    FROM detailTransaction dt
+    WHERE transaction_id = ?`;
+    const dataGetTransaction = [transactionId];
+    const [resGetTransaction] = await connection.query(
+      sqlGetTransaction,
+      dataGetTransaction
+    );
+
+    if (!resGetTransaction.length) {
+      throw {
+        message: "Can not get products",
+      };
+    }
+
     const data = {
-      name: "james",
-      email: "jeje@gmail.com",
-      age: 11,
-      pets: [
-        { id: 1, name: "Bird" },
-        { id: 2, name: "Comodo" },
-        { id: 3, name: "Sea Pig" },
-      ],
+      user: { user_id, username, first_name, last_name, email, phone, age },
+      products: resGetTransaction,
     };
 
     const htmlString = createHtmlString(data);
@@ -89,12 +104,21 @@ const createDetailTransactionController = async (req, res, next) => {
 
       stream.pipe(res);
     });
+
+    // const pdfPath = appRoot + "/src/lib/handlebars/result/result.pdf";
+    // htmlPdf
+    //   .create(htmlString, { format: "A4" })
+    //   .toFile(pdfPath, (err, result) => {
+    //     if (err) throw err;
+
+    //     res.download(pdfPath);
+    //   });
   } catch (error) {
     next(error);
   }
 };
 
 router.get("/", auth, getTransactionListController);
-router.get("/print", createDetailTransactionController);
+router.get("/:transactionId/print", auth, createDetailTransactionController);
 
 module.exports = router;
