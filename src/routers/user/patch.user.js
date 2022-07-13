@@ -29,8 +29,8 @@ const updateUserController = async (req, res, next) => {
     const connection = pool.promise();
 
     // check phone
-    const sqlGetPhone = `SELECT phone FROM user WHERE phone = ?`;
-    const dataGetPhone = [phone];
+    const sqlGetPhone = `SELECT phone FROM user WHERE phone = ? AND user_id != ?`;
+    const dataGetPhone = [phone, user_id];
     const [resGetPhone] = await connection.query(sqlGetPhone, dataGetPhone);
 
     if (resGetPhone.length)

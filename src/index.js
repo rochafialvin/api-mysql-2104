@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
-const port = 2104;
-const bearerToken = require("express-bearer-token");
+const port = 3002;
 const cors = require("cors");
+const bearerToken = require("express-bearer-token");
 
 // ROUTERS
 const cartRouter = require("./routers/cart");
